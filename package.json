@@ -98,6 +98,9 @@
       ]
     }
   ],
+  "dependencies": {
+    "@vue/devtools-api": "6"
+  },
   "devDependencies": {
     "@antfu/eslint-config": "^3.7.3",
     "@pinia/colada": "workspace:*",
