@@ -20,6 +20,7 @@ export default antfu(
       'style/yield-star-spacing': ['error', 'before'],
       'style/arrow-parens': ['error', 'always'],
       'no-console': 'warn',
+      'no-fallthrough': 'off',
       'style/indent': 'off',
       'style/indent-binary-ops': 'off',
       'ts/no-use-before-define': 'off',

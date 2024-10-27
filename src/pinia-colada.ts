@@ -10,6 +10,7 @@ import { useQueryCache } from './query-store'
 import type { ErrorDefault } from './types-extension'
 import type { PiniaColadaPlugin } from './plugins'
 import type { UseQueryReturn } from './use-query'
+import { registerDevtools } from './devtools/plugin'
 
 /**
  * Options for the Pinia Colada plugin.
@@ -70,6 +71,10 @@ export function PiniaColada(app: App, options: PiniaColadaOptions = {}) {
     ...USE_QUERY_DEFAULTS,
     ...useQueryOptions,
   })
+
+  if (process.env.NODE_ENV !== 'production') {
+    registerDevtools(app, useQueryCache(pinia))
+  }
 
   if (process.env.NODE_ENV !== 'production' && !pinia) {
     throw new Error(

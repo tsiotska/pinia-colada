@@ -1,6 +1,11 @@
 import { setupDevtoolsPlugin } from '@vue/devtools-api'
+import {
+  onDevToolsClientConnected,
+  devtools,
+  addCustomTab,
+} from '@vue/devtools-kit'
 import type { QueryCache } from '../query-store'
-import type { App } from 'vue'
+import { h, watch, type App } from 'vue'
 
 const INSPECTOR_ID = 'pinia-colada'
 
@@ -23,10 +28,46 @@ export function registerDevtools(app: App, queryCache: QueryCache) {
         icon: 'local_bar',
       })
 
+      watch(
+        () => queryCache.caches.get(['contacts', '1'])?.state.value,
+        (value) => {
+          console.log('watch', value)
+        },
+      )
+
+      addCustomTab({
+        name: 'Pinia Colada',
+        title: 'Pinia Colada 🍹',
+        icon: 'https://pinia-colada.esm.dev/logo.png',
+        category: 'modules',
+        view: {
+          // type: 'iframe',
+          // src: '/__devtools',
+          type: 'vnode',
+          vnode: h('div', 'Hello world'),
+        },
+      })
+
+      onDevToolsClientConnected(() => {
+        console.log('onDevToolsClientConnected', devtools)
+      })
+
       queryCache.$onAction(({ name }) => {
         console.log('action', name, 'refreshing inspector')
-        // api.sendInspectorTree(INSPECTOR_ID)
-        // api.sendInspectorState(INSPECTOR_ID)
+        switch (name) {
+          case 'ensure':
+          case 'ensureDefinedQuery':
+          case 'remove':
+            api.sendInspectorTree(INSPECTOR_ID)
+            break
+          case 'cancel':
+          case 'invalidate':
+          case 'setEntryState':
+          case 'fetch':
+            api.sendInspectorTree(INSPECTOR_ID)
+          case 'setQueryData':
+            api.sendInspectorState(INSPECTOR_ID)
+        }
       })
 
       api.on.getInspectorTree((payload) => {
@@ -35,7 +76,9 @@ export function registerDevtools(app: App, queryCache: QueryCache) {
         payload.rootNodes = queryCache.getEntries().map((entry) => ({
           id: entry.key.join('/'),
           label: entry.key.join('/'),
-          children: [],
+          tags: [
+            { label: 'query', textColor: 0x000, backgroundColor: 0xAEEAAE },
+          ],
         }))
       })
 

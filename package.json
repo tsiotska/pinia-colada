@@ -99,7 +99,8 @@
     }
   ],
   "dependencies": {
-    "@vue/devtools-api": "6"
+    "@vue/devtools-api": "^7.5.4",
+    "@vue/devtools-kit": "^7.5.4"
   },
   "devDependencies": {
     "@antfu/eslint-config": "^3.7.3",
